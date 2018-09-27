@@ -1,6 +1,5 @@
 # Fishbowl and Handshake custom integration by Pepi
 import os
-import time
 import csv
 import requests
 import config
@@ -10,10 +9,12 @@ from datetime import datetime
 from utils import run_once
 from progress.bar import ChargingBar
 from utils import logo
-        
+
+
 @run_once
 def get_hs_category_id():
-    date_prefix = "New Products | {}".format(datetime.now().strftime("%m/%d/%y"))
+    date_prefix = "New Products | {}".format(
+        datetime.now().strftime("%m/%d/%y"))
     data = {
         "name": date_prefix,
         "id": date_prefix,
@@ -28,7 +29,7 @@ def get_hs_category_id():
         res = r.json()
         category_id = res['objID']
 
-        return category_id, name_date
+        return category_id
 
     except requests.exceptions.ConnectionError as e:
         print("Error: {}".format(e))
@@ -38,8 +39,9 @@ def get_hs_products():
     try:
         # Get first 100 hs products
         print("Product Sync :")
-        r = requests.get('https://app.handshake.com/api/latest/items',
-            auth=(config.HANDSHAKE['APIKEY'], 'X'))
+        r = requests.get('https://app.handshake.com/api/latest/items', auth=(
+            config.HANDSHAKE['APIKEY'], 'X'))
+
         res = r.json()
         hs_products = res['objects'][:]
         print("Total Amount: {}".format(res['meta']['total_count']))
@@ -60,7 +62,7 @@ def get_hs_products():
     except requests.exceptions.ConnectionError as e:
         print("Error: get_hs_products connection error!")
         sys.exit()
-        
+
     # Return the full list of products
     product_bar.finish()
     return hs_products
@@ -103,8 +105,8 @@ def get_hs_customers():
 def get_hs_orders(amount):
     try:
         r = requests.get("https://app.handshake.com/api/latest/orders"
-                "?order_by=-ctime&limit={}".format(amount),
-                auth=(config.HANDSHAKE['APIKEY'], 'X'))
+            "?order_by=-ctime&limit={}".format(amount),
+            auth=(config.HANDSHAKE['APIKEY'], 'X'))
         res = r.json()
 
     except requests.exceptions.ConnectionError as e:
