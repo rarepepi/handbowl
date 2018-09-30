@@ -23,8 +23,8 @@ Y,                    `"8bd888b,             ,P
                ``""YYba8888P""''                 Created by Pepi
 '''
 
-def run_once(f):
 
+def run_once(f):
     def wrapper(*args, **kwargs):
         if not wrapper.has_run:
             wrapper.has_run = True
@@ -32,4 +32,3 @@ def run_once(f):
     wrapper.has_run = False
 
     return wrapper
-
