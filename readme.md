@@ -1,13 +1,19 @@
 # Handbowl
 
-Handbowl connects Handshake B2B Sales to Fishbowl Inventory through using the Handshake API and creating import files for Fishbowl.
-The app is fully extendable and I encourage people to add to the project.
+Handbowl connects Handshake B2B Sales to Fishbowl Inventory by using the Handshake API and creating import spreadsheets for Fishbowl.
 
-### Usage
-	import handbowl
+### Setup/Usage
 
-	hb = Handbowl('API KEY')
-	
-	fishbowl_products = handbowl.get_fishbowl_products()
-	for product in fishbowl_products:
-		handbowl.update_handshake_product()
+1. Clone the project into ~/Documents folder of user with fishbowl client
+
+2. Set Fishbowl Schedule module settings:
+    export(products) --> ~/Documents/products/fb_product.csv
+
+    export(inventory) --> ~/Documents/products/fb_inventory.csv
+
+    import(customers) --> ~/Documents/customers/hs_customers.csv
+
+    import(orders) --> ~/Documents/orders/SO_*.csv
+
+3. Set windows task to run handbowl/core.py every 10   
+mins
