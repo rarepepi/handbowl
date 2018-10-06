@@ -7,6 +7,10 @@ from utils import logo
 
 
 def main():
+
+    # Read the config file for settings and keys
+    # start the handshake class and the fis
+
     # Product Sync
     hs_products = hand.get_products()
     fb_products = bowl.get_products()
@@ -16,17 +20,17 @@ def main():
     hand.update_product_inventory(fb_inventory)
 
     # Customer Sync
-    # hs_customers = hand.get_customers()
-    # fb_customers = bowl.get_customers()
+    hs_customers = hand.get_customers()
+    fb_customers = bowl.get_customers()
 
     # bowl.create_missing_customers(hs_customers, fb_customers)
 
     # Order Sync
-    # hs_orders = hand.get_orders(3)
-    # for order in hs_orders:
-    #     if order['status'] == 'Confirmed':
-    #         bowl.create_order(order)
-    #         hand.update_order_status(order)
+    hs_orders = hand.get_orders(3)
+    for order in hs_orders:
+        if order['status'] == 'Confirmed':
+            bowl.create_order(order)
+            hand.update_order_status(order)
 
 
 if __name__ == '__main__':
