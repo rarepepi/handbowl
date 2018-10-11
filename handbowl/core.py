@@ -32,8 +32,6 @@ def main():
     # then run order sync
         # check for the last 5 orders and if they are confimered then new_sales_order(dict)
 
-
-
     # Product Sync
     hs_products = hand.get_products()
     fb_products = bowl.get_products()
