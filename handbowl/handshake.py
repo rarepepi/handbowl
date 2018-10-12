@@ -2,7 +2,6 @@ import datetime
 import requests
 import config
 import sys
-from progress.bar import ChargingBar
 from utils import run_once
 
 
@@ -31,89 +30,6 @@ def get_category_id():
     except requests.exceptions.ConnectionError as e:
         print("Error: Handshake get_category_id")
         sys.exit()
-
-
-def get_products():
-    try:
-        # Get first 100 hs products
-        print("Product Sync :")
-        r = requests.get('https://app.handshake.com/api/latest/items', auth=(
-            config.HANDSHAKE['APIKEY'], 'X'))
-
-        res = r.json()
-        hs_products = res['objects'][:]
-        print("Total Amount: {}".format(res['meta']['total_count']))
-        product_bar = ChargingBar(
-            'Downloading Products', max=res['meta']['total_count']/100,
-            suffix='%(percent).1f%% - %(elapsed_td)s')
-        product_bar.next()
-        # Use the next url to get the next 100 products
-        while res['meta']['next'] is not None:
-            r = requests.get(
-                'https://app.handshake.com{}'.format(res['meta']['next']),
-                auth=(config.HANDSHAKE['APIKEY'], 'X'))
-
-            res = r.json()
-            hs_products.extend(res['objects'])
-            product_bar.next()
-
-    except requests.exceptions.ConnectionError as e:
-        print("Error: Handshake get_products")
-        sys.exit()
-
-    # Return the full list of products
-    product_bar.finish()
-    return hs_products
-
-
-def get_customers():
-    try:
-        # Get first 100 hs customers
-        r = requests.get(
-            'https://app.handshake.com/api/latest/customers',
-            auth=(config.HANDSHAKE['APIKEY'], 'X'))
-        res = r.json()
-        hs_customers = res['objects']
-        print("Total Amount: {}".format(res['meta']['total_count']))
-
-        customer_bar = ChargingBar(
-            'Updating Customers', max=res['meta']['total_count']/100,
-            suffix='%(percent).1f%% - %(elapsed_td)s')
-        customer_bar.next()
-
-        # Use the next url to get the next 100 customers
-        while res['meta']['next'] is not None:
-            r = requests.get(
-                'https://app.handshake.com{}'.format(res['meta']['next']),
-                auth=(config.HANDSHAKE['APIKEY'], 'X'))
-
-            res = r.json()
-            hs_customers.extend(res['objects'])
-            customer_bar.next()
-
-    except requests.exceptions.ConnectionError as e:
-        print("Error: Handshake get_customers")
-        sys.exit()
-
-    # Return the full list of customers
-    customer_bar.finish()
-    return hs_customers
-
-
-def get_orders(amount):
-    try:
-        r = requests.get(
-            "https://app.handshake.com/api/latest/orders"
-            "?order_by=-ctime&limit={}".format(amount),
-            auth=(config.HANDSHAKE['APIKEY'], 'X'))
-
-        res = r.json()
-
-    except requests.exceptions.ConnectionError as e:
-        print("Error: Handshake get_orders")
-        sys.exit()
-
-    return res['objects']
 
 
 def update_order_status(order):
