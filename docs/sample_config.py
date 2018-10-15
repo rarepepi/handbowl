@@ -1,3 +1,3 @@
-HANDSHAKE = {
-    'APIKEY': '[YOUR API KEY HERE]'
+handshake = {
+    'key': 'YOUR_API_KEY_HERE'
 }
