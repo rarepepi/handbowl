@@ -3,14 +3,25 @@ import datetime
 
 
 class Client():
-    """This is a class wrapper
-    for the handshake json api"""
+    """
+    This is a wrapper
+    for the Handshake JSON API
+    """
 
     def __init__(self, key):
+        """
+        Checks apiKey and starts session
+        with Handshake API
+        """
+
         self.apiKey = key
         self.session = self._init_session()
 
     def _init_session(self):
+        """
+        Tests api key validility
+        And initalizes session with Handshake
+        """
 
         if self._is_api_key_valid():
             print("api key is valid")
@@ -23,6 +34,10 @@ class Client():
             raise ValueError("Must provide correct API Key")
 
     def _is_api_key_valid(self):
+        """
+        Returns boolean on api key validility
+        """
+
         r = requests.get(
             'https://app.handshake.com',
             auth=(self.apiKey, 'X'))
@@ -33,34 +48,52 @@ class Client():
         else:
             return False
 
-    def get_full_product_list(self):
-        print("in product list")
+    def get_products(self, sku=None):
+        """
+        Returns product/s
+        Depending on whether a sku is passed
+        """
         r = self.session.get(
             'https://app.handshake.com/api/latest/items')
-
         res = r.json()
 
-        products = res['objects'][:]
-        print("total: {}".format(res['meta']['total_count']))
+        products = res['objects']
 
         while res['meta']['next'] is not None:
-            print(res['meta']['next'])
             r = self.session.get(
                 'https://app.handshake.com{}'.format(
                     res['meta']['next']))
-
             res = r.json()
+
             products.extend(res['objects'])
 
         return products
 
     def get_full_inventory_list(self):
-        pass
+        """
+        Returns list of all inventory items
+        """
+
+        r = self.session.get(
+            'https://app.handshake.com/api/latest/item_stock_units')
+        res = r.json()
+
+        inventory = res['objects']
+
+        while res['meta']['next'] is not None:
+            r = self.session.get(
+                'https://app.handshake.com/api/latest/item_stock_units')
+            res = r.json()
+
+            inventory.extend(res['objects'])
 
     def get_full_customer_list(self):
+        """
+        Returns list of all customers objects
+        """
+
         r = self.session.get(
             'https://app.handshake.com/api/latest/customers')
-
         res = r.json()
 
         customers = res['objects']
@@ -70,22 +103,30 @@ class Client():
             r = self.session.get(
                 'https://app.handshake.com{}'.format(
                     res['meta']['next']))
-
             res = r.json()
+
             customers.extend(res['objects'])
 
         return customers
 
     def get_recent_orders(self):
+        """
+        Returns last 5 orders objects in a list
+        """
+
         r = self.session.get(
             'https://app.handshake.com/api/latest/orders'
             '?order_by=-ctime&limit=5')
-
         res = r.json()
 
         return res['objects']
 
     def create_new_product_category_id(self):
+        """
+        Creates a new product category in product tree
+        returns object id of new category
+        """
+
         date = datetime.now().strftime("%m/%d/%y")
         hs_category_name = "New Products | {}".format(date)
 
@@ -104,58 +145,22 @@ class Client():
 
         return category_id
 
-    def update_order_status(self, order):
+    def change_order_status(self, order_id, old_status, new_status):
+        """
+        Takes in the order id and changes the status of that order
+        using the passed in old status and new status
+        """
         payload = {
-            "old": "Confirmed",
-            "new": "Processing"
+            "old": old_status,
+            "new": new_status
         }
+
         r = self.session.post(
             'https://app.handshake.com/api/latest/orders/{}/'
-            'actions/changeStatus'.format(order['id'].strip('#')),
+            'actions/changeStatus'.format(order_id),
             json=payload)
 
-        r.status_code
-
-    # def create_missing_products(hs_products, fb_products):
-    #     missing_products = []
-
-    #     for product in fb_products:
-    #         if not any(dict['sku'] == product[0] for dict in hs_products):
-    #             temp_id_date = self.get_category_id()
-
-    #             print("product missing in hs: {}".format(product[0]))
-    #             if temp_id_date is not None:
-    #                 hs_category_id_and_name_date = temp_id_date[:]
-
-    #             temp = {
-    #                 "category": {
-    #                     "entityType": "Category",
-    #                     "name": hs_category_id_and_name_date[1],
-    #                     "id": hs_category_id_and_name_date[1],
-    #                     "categoryPosition": 0,
-    #                     "objID": hs_category_id_and_name_date[0]
-    #                 },
-    #                 "longDesc": product[2],
-    #                 "name": product[2],
-    #                 "sku": product[0],
-    #                 "unitPrice": product[5]
-    #             }
-    #             missing_products.append(temp)
-
-    #     data = {
-    #         "objects": missing_products
-    #     }
-
-    #     try:
-    #         r = requests.patch(
-    #             'https://app.handshake.com/api/latest/items',
-    #             auth=(config.HANDSHAKE['APIKEY'], 'X'),
-    #             json=data)
-    #         r.status_code
-
-    #     except requests.exceptions.ConnectionError as e:
-    #         print("Error: catergory_id connection error!")
-    #         sys.exit()
+        r
 
     # def update_product_inventory(hs_products, fb_products):
     #     for product in fb_products:

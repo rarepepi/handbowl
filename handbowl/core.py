@@ -1,12 +1,17 @@
 import os
 import config
-from handshake import Client
+from handshake import Client as hs_client
+from fishbowl import Client as fb_client
 from utils import logo
 
 
 def main():
-    hand = Client(config.handshake['key'])
-    print(hand.get_recent_orders())
+    hand = hs_client(config.handshake['key'], config.handshake['password'])
+    bowl = fb_client(
+        config.fishbowl['host'],
+        config.fishbowl['user'],
+        config.fishbowl['password']
+    )
 
 
 if __name__ == '__main__':

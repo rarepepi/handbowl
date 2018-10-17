@@ -1,12 +1,26 @@
 import csv
+from requests_xml import XLMSession
 
 
+class Request():
+    """
+    Contains methods that
+    return proper fishbowl xml requests
+    """
+    pass
 class Client():
+    """ This is a wrapper
+    for the Fishbowl XML API"""
 
     def __init__(self, host, user, password):
         self.host = host
         self.user = user
         self.password = password
+        self.session = _init_session()
+
+    def _init_session(self):
+        session = XLMSession()
+        return session
 
     def get_products():
         # Open and return fishbowl products csv
@@ -43,8 +57,9 @@ class Client():
             "ShipToAddress", "ShipToCity", "ShipToState", "ShipToZip",
             "ShipToCountry", "ShipToResidential", "CarrierName", "TaxRateName",
             "PriorityId", "PONum", "VendorPONum", "Date", "Salesman",
-            "ShippingTerms", "PaymentTerms", "FOB", "Note", "QuickBooksClassName",
-            "LocationGroupName", "FulfillmentDate", "URL", "CarrierService",
+            "ShippingTerms", "PaymentTerms", "FOB", "Note",
+            "QuickBooksClassName", "LocationGroupName",
+            "FulfillmentDate", "URL", "CarrierService",
             "DateExpired", "Phone", "Email", "CF-Custom"
             ]
 
@@ -63,23 +78,8 @@ class Client():
         customer_state = order['billTo']['state']
         customer_zip = order['billTo']['postcode']
         customer_country = order['billTo']['country']
-        normalized_date = order['cdate'][5:7] + \
-            order['cdate'][7:10].replace('-', '/') + "/" + order['cdate'][:4]
-        sales_rep = order['ownerName']
-        payment_terms = order['paymentTerms']
-        customer_phone = order['billTo']['phone']
-        customer_email = order['customer']['email']
-
-        customer_info = [
-            "SO", order_id, '20', customer_name,
-            customer_name, customer_name, customer_address, customer_city,
-            customer_state, customer_zip, customer_country, customer_name,
-            customer_address, customer_city, customer_state,
-            customer_zip, customer_country, 'false', 'UW Truck', 'None', '30',
-            '', '', normalized_date, sales_rep, "Invoiced", payment_terms,
-            'Origin', '', 'None', 'Main', normalized_date, '', '', '',
-            customer_phone, customer_email, ''
-         ]
+        normalwwwswwwerdtsewaehkuiytreiop0'[
+        l;'kj']
 
         products = order['lines']
 
